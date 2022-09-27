@@ -1,5 +1,7 @@
+import json
+
 import scrapy
-from ..items import ContestTestItem
+from ..items import TestItemLoader
 
 
 class ContestTestSpider(scrapy.Spider):
@@ -8,27 +10,44 @@ class ContestTestSpider(scrapy.Spider):
     start_urls = ['http://web-5umjfyjn4a-ew.a.run.app/clickhere']
 
     def parse(self, response):
-        item_links = response.css('.gtco-practice-area-item .gtco-copy a')
+        item_links = response.css(".gtco-practice-area-item .gtco-copy a")
+        yield from response.follow_all(item_links, self.parse_item)
 
-        yield from response.follow_all(item_links,self.parse_item)
-
-        next_page = response.xpath("//a[contains(text(),'Next Page')]")
-
-        yield from response.follow_all(next_page)
+        page_links = response.xpath("//a[contains(text(), 'Next Page')]")
+        yield from response.follow_all(page_links)
 
     def parse_item(self, response):
-        id = response.css('#uuid::text').get()
-        item_name = response.css('.heading-colored::text').get()
+        recommended_links = response.css(".team-item a")
+        yield from response.follow_all(recommended_links, self.parse_item)
+
+        il = TestItemLoader(response=response)
+        il.add_css("item_id", "#uuid::text")
+        il.add_css("name", "h2.heading-colored::text")
+
+        image_id_css = ".img-shadow ::attr(src)"
+        image_id_pattern = r"/([\da-f-]+)\.jpg"
+        image_id = response.css(image_id_css).re_first(image_id_pattern)
+        if not image_id:
+            script_xpath = "//script[contains(text(), 'mainimage')]"
+            image_id = response.xpath(script_xpath).re_first(image_id_pattern)
+        if image_id:
+            il.add_value("image_id", image_id)
+
         rating = response.css('p:contains("Rating") span::text').get()
-        if 'NO RATING' in rating:
-            response.follow_all(response.css('::attr(data-price-url)'),
-                                callback=self.parse_rating,
-                                cb_kwargs={"item": ContestTestItem(item_id=id,name=item_name)}
-                                )
-            rating == response.css('.price::text').extract_first()
+        if "NO RATING" in rating:
+            yield from response.follow_all(
+                response.css("::attr(data-price-url)"),
+                callback=self.parse_rating,
+                cb_kwargs={"item": il.load_item()},
+            )
+            return
+        il.add_value("rating", rating)
 
-        yield ContestTestItem(item_id=id,name=item_name,rating=rating)
+        yield il.load_item()
 
-        # item = ContestTestItem ()
-    # def parse_rating(self,response,item):
+    def parse_rating(self, response, item):
+        data = json.loads(response.text)
+        il = TestItemLoader(item=item)
+        il.add_value("rating", data.get("value"))
+        yield il.load_item()
 
