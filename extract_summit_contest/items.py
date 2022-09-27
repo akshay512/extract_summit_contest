@@ -10,10 +10,10 @@ from typing import Optional
 from itemloaders.processors import Compose, Join, TakeFirst
 from scrapy.loader import ItemLoader
 
-class ExtractSummitContestItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+# class ExtractSummitContestItem(scrapy.Item):
+#     # define the fields for your item here like:
+#     # name = scrapy.Field()
+#     pass
 
 @dataclass
 class ContestTestItem:
