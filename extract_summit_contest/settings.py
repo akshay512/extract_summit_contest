@@ -13,6 +13,8 @@ SPIDER_MODULES = ['extract_summit_contest.spiders']
 NEWSPIDER_MODULE = 'extract_summit_contest.spiders'
 
 
+
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'extract_summit_contest (+http://www.yourdomain.com)'
 
@@ -31,7 +33,7 @@ ROBOTSTXT_OBEY = False
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -40,6 +42,7 @@ ROBOTSTXT_OBEY = False
 DEFAULT_REQUEST_HEADERS = {
   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   'Accept-Language': 'en',
+  'Cookie': 'home_visited=true'
 }
 
 # Enable or disable spider middlewares
@@ -86,3 +89,4 @@ DEFAULT_REQUEST_HEADERS = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+# HTTPCACHE_IGNORE_HTTP_CODES = [301,302]

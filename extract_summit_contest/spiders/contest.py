@@ -1,15 +1,14 @@
-import json
-
 import scrapy
+import json
+import re
 
 
-# from ..items import TestItemLoader
-
-
-class ContestTestSpider(scrapy.Spider):
-    name = 'contest_test'
+class ContestSpider(scrapy.Spider):
+    name = 'contest'
     allowed_domains = ['extract-summit-kokb7ng7-5umjfyjn4a-ew.a.run.app']
-    start_urls = ['http://extract-summit-kokb7ng7-5umjfyjn4a-ew.a.run.app/clickhere?sort_by=popularity']
+    start_urls = ['https://extract-summit-kokb7ng7-5umjfyjn4a-ew.a.run.app/clickhere?sort_by=popularity']
+
+
 
     def parse(self, response):
         item_links = response.css(".gtco-practice-area-item .gtco-copy a")
@@ -25,10 +24,18 @@ class ContestTestSpider(scrapy.Spider):
         # il = TestItemLoader(response=response)
         # il.add_css("item_id", "#uuid::text")
         # il.add_css("name", "h2.heading-colored::text")
+        telephone_number = response.css("#gtco-about > .container > div:nth-child(3) > script").get().split('"')[1]
+        print('telephone: '+telephone_number)
+
+        cyphered_phone = [*telephone_number]
+        telephone = ''
+        for x in cyphered_phone:
+            number = chr(ord(x) - 16)
+            telephone += number
 
         item = {'item_id': response.css('#uuid::text').get(),
                 'name': response.css('h2.heading-colored::text').get(),
-                'phone': response.css('#telephone-number::text').get()}
+                'phone': telephone}
 
         image_id_css = ".img-shadow ::attr(src)"
         image_id_pattern = r"/([\da-f-]+)\.jpg"
