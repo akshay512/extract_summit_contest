@@ -18,7 +18,7 @@ class ContestSpider(scrapy.Spider):
         yield from response.follow_all(page_links)
 
     def parse_item(self, response):
-        recommended_links = response.css(".team-item a")
+        recommended_links = response.css(".row .team-item a")
         yield from response.follow_all(recommended_links, self.parse_item)
 
         # il = TestItemLoader(response=response)
