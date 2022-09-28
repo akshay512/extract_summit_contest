@@ -25,7 +25,7 @@ class ContestSpider(scrapy.Spider):
         # il.add_css("item_id", "#uuid::text")
         # il.add_css("name", "h2.heading-colored::text")
         telephone_number = response.css("#gtco-about > .container > div:nth-child(3) > script").get().split('"')[1]
-        print('telephone: '+telephone_number)
+        # print('telephone: '+telephone_number)
 
         cyphered_phone = [*telephone_number]
         telephone = ''
@@ -49,7 +49,7 @@ class ContestSpider(scrapy.Spider):
             item['image_id'] = None
 
         rating = response.css('p:contains("Rating") span::text').get()
-        if "NO RATING" in rating:
+        if rating is None or "NO RATING" in rating:
             yield from response.follow_all(
                 response.css("::attr(data-price-url)"),
                 callback=self.parse_rating,
