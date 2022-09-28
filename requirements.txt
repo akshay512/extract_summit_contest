@@ -28,9 +28,6 @@ Scrapy
 service-identity
 six
 tldextract
-Twisted
-twisted-iocpsupport
 typing-extensions
 urllib3
 w3lib
-zope.interface
