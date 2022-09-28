@@ -1,6 +1,8 @@
 import json
 
 import scrapy
+
+
 # from ..items import TestItemLoader
 
 
@@ -34,7 +36,7 @@ class ContestTestSpider(scrapy.Spider):
             script_xpath = "//script[contains(text(), 'mainimage')]"
             image_id = response.xpath(script_xpath).re_first(image_id_pattern)
         if image_id:
-            item['image_id']= image_id
+            item['image_id'] = image_id
 
         rating = response.css('p:contains("Rating") span::text').get()
         if "NO RATING" in rating:
@@ -44,13 +46,12 @@ class ContestTestSpider(scrapy.Spider):
                 cb_kwargs={"item": item},
             )
             return
-        item['rating']=rating
+        item['rating'] = rating
 
         yield item
 
     def parse_rating(self, response, item):
         item_res = item
         data = json.loads(response.text)
-        item_res['rating']= data.get("value")
+        item_res['rating'] = data.get("value")
         yield item_res
-
