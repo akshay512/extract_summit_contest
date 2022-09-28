@@ -45,6 +45,8 @@ class ContestSpider(scrapy.Spider):
             image_id = response.xpath(script_xpath).re_first(image_id_pattern)
         if image_id:
             item['image_id'] = image_id
+        else:
+            item['image_id'] = None
 
         rating = response.css('p:contains("Rating") span::text').get()
         if "NO RATING" in rating:
