@@ -6,9 +6,7 @@ import re
 class ContestSpider(scrapy.Spider):
     name = 'contest'
     allowed_domains = ['extract-summit-kokb7ng7-5umjfyjn4a-ew.a.run.app']
-    start_urls = ['https://extract-summit-kokb7ng7-5umjfyjn4a-ew.a.run.app/clickhere?sort_by=popularity','https://extract-summit-kokb7ng7-5umjfyjn4a-ew.a.run.app/clickhere?sort_by=alphabetically']
-
-
+    start_urls = ['https://extract-summit-kokb7ng7-5umjfyjn4a-ew.a.run.app/clickhere?sort_by=alphabetically']
 
     def parse(self, response):
         item_links = response.css(".gtco-practice-area-item .gtco-copy a")
@@ -18,7 +16,7 @@ class ContestSpider(scrapy.Spider):
         yield from response.follow_all(page_links)
 
     def parse_item(self, response):
-        recommended_links = response.css(".team-item")
+        recommended_links = response.css(".team-item a")
         # print('recommended')
         # print(len(recommended_links)>0)
         yield from response.follow_all(recommended_links, self.parse_item)
